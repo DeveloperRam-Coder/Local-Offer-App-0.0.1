@@ -1,0 +1,31 @@
+{
+  "expo": {
+    "name": "Ram",
+    "slug": "frontend",
+    "version": "1.0.0",
+    "scheme": "myapp",
+    "android": {
+      "intentFilters": [
+        {
+          "action": "VIEW",
+          "data": [
+            {
+              "scheme": "https",
+              "host": "localoffers.example.com"
+            },
+            {
+              "scheme": "myapp"
+            }
+          ],
+          "category": [
+            "BROWSABLE",
+            "DEFAULT"
+          ]
+        }
+      ]
+    },
+    "plugins": [
+      "expo-font"
+    ]
+  }
+}

@@ -1,0 +1,13 @@
+Place your mock images here for use in the UI:
+- croissant.png
+- avocado.png
+- coffee.png
+- cheese.png
+- wallet.png
+- vinyl.png
+- sandwich.png
+- sandwich2.png
+- map.png
+- shirt1.png
+- shirt2.png
+- shirt3.png 
