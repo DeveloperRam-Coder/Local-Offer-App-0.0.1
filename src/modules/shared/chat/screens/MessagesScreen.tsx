@@ -5,10 +5,10 @@ import {
   FlatList,
   TouchableOpacity,
   StyleSheet,
-  SafeAreaView,
   TextInput,
   RefreshControl,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { useApp } from '../../../../context/AppContext';
@@ -37,6 +37,7 @@ export default function MessagesScreen({ navigation }: any) {
   const { user } = useApp();
   const [searchQuery, setSearchQuery] = useState('');
   const [refreshing, setRefreshing] = useState(false);
+  const normalize = (value?: string) => (value ?? '').toLowerCase();
 
   // Mock conversations data
   const [conversations] = useState<ConversationItem[]>([
@@ -75,7 +76,7 @@ export default function MessagesScreen({ navigation }: any) {
   ]);
 
   const filteredConversations = conversations.filter((conv) =>
-    conv.name.toLowerCase().includes(searchQuery.toLowerCase())
+    normalize(conv?.name).includes(normalize(searchQuery))
   );
 
   const onRefresh = () => {
@@ -83,7 +84,9 @@ export default function MessagesScreen({ navigation }: any) {
     setTimeout(() => setRefreshing(false), 1000);
   };
 
-  const formatTime = (date: Date) => {
+  const formatTime = (value: Date | string) => {
+    const date = value instanceof Date ? value : new Date(value);
+    if (Number.isNaN(date.getTime())) return '';
     const now = new Date();
     const diff = now.getTime() - date.getTime();
     const minutes = Math.floor(diff / 60000);
@@ -97,9 +100,11 @@ export default function MessagesScreen({ navigation }: any) {
     return date.toLocaleDateString();
   };
 
-  const getInitials = (name: string) => {
-    return name
+  const getInitials = (name?: string) => {
+    const safeName = name?.trim() || 'User';
+    return safeName
       .split(' ')
+      .filter(Boolean)
       .map((word) => word[0])
       .join('')
       .toUpperCase()
@@ -126,7 +131,7 @@ export default function MessagesScreen({ navigation }: any) {
 
       <View style={styles.conversationContent}>
         <View style={styles.conversationHeader}>
-          <Text style={styles.conversationName}>{item.name}</Text>
+          <Text style={styles.conversationName}>{item.name || 'Conversation'}</Text>
           <Text style={styles.conversationTime}>{formatTime(item.timestamp)}</Text>
         </View>
         <Text style={styles.lastMessage} numberOfLines={1}>
@@ -211,7 +216,7 @@ export default function MessagesScreen({ navigation }: any) {
             </Text>
             <TouchableOpacity
               style={styles.exploreButton}
-              onPress={() => navigation.navigate('BuyerHome')}
+              onPress={() => navigation.navigate('Main', { screen: 'BuyerHome' })}
             >
               <LinearGradient
                 colors={[COLORS.primary, COLORS.accent]}

@@ -21,7 +21,8 @@ export default function AnalyticsChart({
   maxValue,
   barColor = COLORS.primary,
 }: AnalyticsChartProps) {
-  const max = maxValue || Math.max(...data);
+  const safeData = data || [];
+  const max = maxValue || (safeData.length > 0 ? Math.max(...safeData) : 1);
   const height = 120;
 
   return (
@@ -29,23 +30,27 @@ export default function AnalyticsChart({
       <Text style={styles.title}>{title}</Text>
       
       <View style={styles.chart}>
-        {data.map((value, index) => {
-          const barHeight = (value / max) * height;
-          return (
-            <View key={index} style={styles.barContainer}>
-              <View
-                style={[
-                  styles.bar,
-                  {
-                    height: barHeight,
-                    backgroundColor: barColor,
-                  },
-                ]}
-              />
-              <Text style={styles.barLabel}>{value}</Text>
-            </View>
-          );
-        })}
+        {safeData.length > 0 ? (
+          safeData.map((value, index) => {
+            const barHeight = (value / max) * height;
+            return (
+              <View key={index} style={styles.barContainer}>
+                <View
+                  style={[
+                    styles.bar,
+                    {
+                      height: barHeight,
+                      backgroundColor: barColor,
+                    },
+                  ]}
+                />
+                <Text style={styles.barLabel}>{value}</Text>
+              </View>
+            );
+          })
+        ) : (
+          <Text style={styles.barLabel}>No data available</Text>
+        )}
       </View>
     </View>
   );

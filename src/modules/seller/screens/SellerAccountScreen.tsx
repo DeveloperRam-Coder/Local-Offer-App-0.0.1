@@ -29,7 +29,7 @@ export default function SellerProfile({ navigation }: any) {
   const { user, logout } = useApp();
   const { profile, loading, updateProfile } = useSellerProfile();
   const [isEditing, setIsEditing] = useState(false);
-  const [editedProfile, setEditedProfile] = useState(profile);
+  const [editedProfile, setEditedProfile] = useState(profile || {});
 
   if (!user || user.role !== 'seller') {
     return (
@@ -73,17 +73,17 @@ export default function SellerProfile({ navigation }: any) {
               <View style={styles.avatar}>
                 <Ionicons name="person-circle" size={80} color={COLORS.primary} />
               </View>
-              {profile.verified && (
+              {profile?.verified && (
                 <View style={styles.verifiedBadge}>
                   <Ionicons name="checkmark-circle" size={28} color={COLORS.success} />
                 </View>
               )}
             </View>
-            <Text style={styles.name}>{profile.name}</Text>
+            <Text style={styles.name}>{profile?.name || 'Seller'}</Text>
             <View style={styles.ratingContainer}>
               <Ionicons name="star" size={16} color={COLORS.accent} />
-              <Text style={styles.rating}>{profile.rating}/5.0</Text>
-              <Text style={styles.reviewCount}>({profile.reviewCount} reviews)</Text>
+              <Text style={styles.rating}>{profile?.rating || 0}/5.0</Text>
+              <Text style={styles.reviewCount}>({profile?.reviewCount || 0} reviews)</Text>
             </View>
           </View>
 
@@ -113,7 +113,7 @@ export default function SellerProfile({ navigation }: any) {
                   style={[styles.actionButton, styles.cancelButton]}
                   onPress={() => {
                     setIsEditing(false);
-                    setEditedProfile(profile);
+                    setEditedProfile(profile || {});
                   }}
                 >
                   <Ionicons name="close-outline" size={18} color={COLORS.danger} />
@@ -141,13 +141,13 @@ export default function SellerProfile({ navigation }: any) {
                   placeholderTextColor={COLORS.subtle}
                 />
               ) : (
-                <Text style={styles.fieldValue}>{profile.name}</Text>
+                <Text style={styles.fieldValue}>{profile?.name || 'N/A'}</Text>
               )}
             </View>
 
             <View style={styles.fieldGroup}>
               <Text style={styles.fieldLabel}>Email</Text>
-              <Text style={styles.fieldValue}>{profile.email}</Text>
+              <Text style={styles.fieldValue}>{profile?.email || 'N/A'}</Text>
             </View>
 
             <View style={styles.fieldGroup}>
@@ -155,14 +155,14 @@ export default function SellerProfile({ navigation }: any) {
               {isEditing ? (
                 <TextInput
                   style={styles.input}
-                  value={editedProfile.phone || ''}
+                  value={editedProfile?.phone || ''}
                   onChangeText={(text) =>
                     setEditedProfile({ ...editedProfile, phone: text })
                   }
                   placeholderTextColor={COLORS.subtle}
                 />
               ) : (
-                <Text style={styles.fieldValue}>{profile.phone || 'Not added'}</Text>
+                <Text style={styles.fieldValue}>{profile?.phone || 'Not added'}</Text>
               )}
             </View>
 
@@ -171,14 +171,14 @@ export default function SellerProfile({ navigation }: any) {
               {isEditing ? (
                 <TextInput
                   style={styles.input}
-                  value={editedProfile.location || ''}
+                  value={editedProfile?.location || ''}
                   onChangeText={(text) =>
                     setEditedProfile({ ...editedProfile, location: text })
                   }
                   placeholderTextColor={COLORS.subtle}
                 />
               ) : (
-                <Text style={styles.fieldValue}>{profile.location || 'Not specified'}</Text>
+                <Text style={styles.fieldValue}>{profile?.location || 'Not specified'}</Text>
               )}
             </View>
 
@@ -187,7 +187,7 @@ export default function SellerProfile({ navigation }: any) {
               {isEditing ? (
                 <TextInput
                   style={[styles.input, styles.bioInput]}
-                  value={editedProfile.bio || ''}
+                  value={editedProfile?.bio || ''}
                   onChangeText={(text) =>
                     setEditedProfile({ ...editedProfile, bio: text })
                   }
@@ -196,7 +196,7 @@ export default function SellerProfile({ navigation }: any) {
                   numberOfLines={4}
                 />
               ) : (
-                <Text style={styles.fieldValue}>{profile.bio || 'No bio added'}</Text>
+                <Text style={styles.fieldValue}>{profile?.bio || 'No bio added'}</Text>
               )}
             </View>
           </View>
@@ -206,19 +206,19 @@ export default function SellerProfile({ navigation }: any) {
             <Text style={styles.sectionTitle}>Statistics</Text>
             <View style={styles.statsGrid}>
               <View style={styles.statBox}>
-                <Text style={styles.statValue}>{profile.totalSales}</Text>
+                <Text style={styles.statValue}>{profile?.totalSales || 0}</Text>
                 <Text style={styles.statLabel}>Total Sales</Text>
               </View>
               <View style={styles.statBox}>
-                <Text style={styles.statValue}>{profile.responseTime}m</Text>
+                <Text style={styles.statValue}>{profile?.responseTime || 0}m</Text>
                 <Text style={styles.statLabel}>Avg Response</Text>
               </View>
               <View style={styles.statBox}>
-                <Text style={styles.statValue}>{profile.reviewCount}</Text>
+                <Text style={styles.statValue}>{profile?.reviewCount || 0}</Text>
                 <Text style={styles.statLabel}>Reviews</Text>
               </View>
               <View style={styles.statBox}>
-                <Text style={styles.statValue}>{profile.rating}</Text>
+                <Text style={styles.statValue}>{profile?.rating || 0}</Text>
                 <Text style={styles.statLabel}>Rating</Text>
               </View>
             </View>
@@ -231,7 +231,7 @@ export default function SellerProfile({ navigation }: any) {
               <View style={styles.infoContent}>
                 <Text style={styles.infoLabel}>Member Since</Text>
                 <Text style={styles.infoValue}>
-                  {new Date(profile.joinDate).toLocaleDateString()}
+                  {profile?.joinDate ? new Date(profile.joinDate).toLocaleDateString() : 'N/A'}
                 </Text>
               </View>
             </View>

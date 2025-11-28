@@ -70,7 +70,7 @@ export default function SellerDashboard({ navigation }: any) {
           <View style={styles.header}>
             <View>
               <Text style={styles.greeting}>Welcome back,</Text>
-              <Text style={styles.name}>{profile.name}</Text>
+              <Text style={styles.name}>{profile?.name || user?.name || 'Seller'}</Text>
             </View>
             <View style={styles.verifiedBadge}>
               <Ionicons name="checkmark-circle" size={24} color={COLORS.success} />
@@ -83,25 +83,25 @@ export default function SellerDashboard({ navigation }: any) {
             <StatCard
               icon="cash-outline"
               label="Total Earnings"
-              value={`$${analytics.totalEarnings.toFixed(2)}`}
+              value={`$${(analytics?.totalEarnings || 0).toFixed(2)}`}
               color={COLORS.success}
             />
             <StatCard
               icon="trending-up-outline"
               label="Total Sales"
-              value={analytics.totalSales}
+              value={analytics?.totalSales || 0}
               color={COLORS.primary}
             />
             <StatCard
               icon="star-outline"
               label="Rating"
-              value={`${analytics.rating}/5.0`}
+              value={`${analytics?.rating || 0}/5.0`}
               color={COLORS.accent}
             />
             <StatCard
               icon="time-outline"
               label="Avg. Response Time"
-              value={`${analytics.responseTime}m`}
+              value={`${analytics?.responseTime || 0}m`}
               color={COLORS.primary}
             />
           </View>
@@ -110,7 +110,7 @@ export default function SellerDashboard({ navigation }: any) {
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Weekly Views</Text>
             <AnalyticsChart
-              data={analytics.weeklyViews}
+              data={analytics?.weeklyViews || []}
               title="Views by Day"
               barColor={COLORS.primary}
             />
@@ -119,7 +119,7 @@ export default function SellerDashboard({ navigation }: any) {
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Monthly Sales</Text>
             <AnalyticsChart
-              data={analytics.monthlySales.slice(0, 7)}
+              data={(analytics?.monthlySales || []).slice(0, 7)}
               title="Sales Last 7 Days"
               barColor={COLORS.success}
             />
@@ -142,7 +142,7 @@ export default function SellerDashboard({ navigation }: any) {
               onPress={() => navigation.navigate('ManageOffers')}
             >
               <Ionicons name="pricetags-outline" size={20} color={COLORS.text} />
-              <Text style={styles.actionText}>Manage Offers ({myOffers.length})</Text>
+              <Text style={styles.actionText}>Manage Offers ({myOffers?.length || 0})</Text>
               <Ionicons name="chevron-forward" size={20} color={COLORS.subtle} />
             </TouchableOpacity>
 
@@ -162,18 +162,18 @@ export default function SellerDashboard({ navigation }: any) {
             <View style={styles.infoCard}>
               <View style={styles.infoRow}>
                 <Text style={styles.infoLabel}>Location:</Text>
-                <Text style={styles.infoValue}>{profile.location}</Text>
+                <Text style={styles.infoValue}>{profile?.location || 'N/A'}</Text>
               </View>
               <View style={styles.divider} />
               <View style={styles.infoRow}>
                 <Text style={styles.infoLabel}>Response Time:</Text>
-                <Text style={styles.infoValue}>{profile.responseTime}m avg</Text>
+                <Text style={styles.infoValue}>{profile?.responseTime ? `${profile.responseTime}m avg` : 'N/A'}</Text>
               </View>
               <View style={styles.divider} />
               <View style={styles.infoRow}>
                 <Text style={styles.infoLabel}>Member Since:</Text>
                 <Text style={styles.infoValue}>
-                  {new Date(profile.joinDate).toLocaleDateString()}
+                  {profile?.joinDate ? new Date(profile.joinDate).toLocaleDateString() : 'N/A'}
                 </Text>
               </View>
             </View>

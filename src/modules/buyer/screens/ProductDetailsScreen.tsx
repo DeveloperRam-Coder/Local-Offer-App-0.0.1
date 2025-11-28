@@ -1,18 +1,18 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
   StyleSheet,
-  SafeAreaView,
   ScrollView,
   TouchableOpacity,
   Image,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { useBuyerFavorites, useBuyerCart } from '../hooks';
 import { RatingDisplay, ReviewCard } from '../components';
-import { generateMockReviews } from '../utils';
+import { ReviewService } from '../../../services/api';
 import { DEFAULT_PRODUCT_IMAGE } from '../../../assets/images';
 
 const COLORS = {
@@ -29,25 +29,6 @@ const COLORS = {
   border: '#334155',
 };
 
-const mockProduct = {
-  id: '1',
-  title: 'Fresh Organic Avocados (1kg)',
-  description:
-    'High-quality organic avocados sourced directly from local farms. Perfect for guacamole, salads, and healthy snacking. Delivered fresh daily.',
-  price: 4.99,
-  rating: 4.5,
-  reviewCount: 124,
-  category: 'Fresh Produce',
-  condition: 'new',
-  inStock: true,
-  views: 1250,
-  likes: 340,
-  sellerId: 's-1',
-  sellerName: 'Local Farm Market',
-  sellerRating: 4.8,
-  distanceMeters: 2500,
-};
-
 interface ProductDetailsScreenProps {
   route?: { params?: { productId: string } };
   navigation?: any;
@@ -56,10 +37,46 @@ interface ProductDetailsScreenProps {
 export const ProductDetailsScreen: React.FC<ProductDetailsScreenProps> = ({ navigation }) => {
   const [quantity, setQuantity] = useState(1);
   const [showAllReviews, setShowAllReviews] = useState(false);
+  const [reviews, setReviews] = useState<any[]>([]);
+  const [loading, setLoading] = useState(false);
   const { isFavorite, addToFavorites, removeFromFavorites } = useBuyerFavorites();
   const { addToCart } = useBuyerCart();
 
-  const reviews = generateMockReviews();
+  const mockProduct = {
+    id: '1',
+    title: 'Fresh Organic Avocados (1kg)',
+    description:
+      'High-quality organic avocados sourced directly from local farms. Perfect for guacamole, salads, and healthy snacking. Delivered fresh daily.',
+    price: 4.99,
+    rating: 4.5,
+    reviewCount: 124,
+    category: 'Fresh Produce',
+    condition: 'new',
+    inStock: true,
+    views: 1250,
+    likes: 340,
+    sellerId: 's-1',
+    sellerName: 'Local Farm Market',
+    sellerRating: 4.8,
+    distanceMeters: 2500,
+  };
+
+  useEffect(() => {
+    const loadReviews = async () => {
+      setLoading(true);
+      try {
+        const data = await ReviewService.getByOfferId(mockProduct.id);
+        setReviews(data as any[]);
+      } catch (error) {
+        console.error('Failed to load reviews:', error);
+        setReviews([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadReviews();
+  }, []);
+
   const displayReviews = showAllReviews ? reviews : reviews.slice(0, 2);
   const isLiked = isFavorite(mockProduct.id);
 

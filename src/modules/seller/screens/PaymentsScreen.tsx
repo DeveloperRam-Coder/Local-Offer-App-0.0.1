@@ -3,11 +3,11 @@ import {
   View,
   Text,
   StyleSheet,
-  SafeAreaView,
   ScrollView,
   TouchableOpacity,
   FlatList,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { useApp } from '../../../context/AppContext';
@@ -35,10 +35,19 @@ const FILTERS = [
 
 export default function PaymentsScreen() {
   const { user } = useApp();
-  const { transactions, filter, setFilter, totalEarnings, totalCount } =
-    useSellerTransactions();
+
+  // SAFE DEFAULTS → Prevent TypeErrors
+  const {
+    transactions = [],
+    filter = 'all',
+    setFilter = () => {},
+    totalEarnings = 0,
+    totalCount = 0,
+  } = useSellerTransactions() || {};
+
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState('stripe');
 
+  // If user is not a seller
   if (!user || user.role !== 'seller') {
     return (
       <LinearGradient
@@ -53,8 +62,13 @@ export default function PaymentsScreen() {
     );
   }
 
-  const completedTransactions = transactions.filter((t) => t.status === 'completed');
-  const pendingTransactions = transactions.filter((t) => t.status === 'pending');
+  // Safe transaction filtering
+  const completedTransactions = transactions.filter(
+    (t) => t?.status === 'completed'
+  );
+  const pendingTransactions = transactions.filter(
+    (t) => t?.status === 'pending'
+  );
 
   return (
     <LinearGradient
@@ -74,14 +88,18 @@ export default function PaymentsScreen() {
             <View style={styles.summaryContainer}>
               <View style={styles.summaryCard}>
                 <Text style={styles.summaryLabel}>Total Earnings</Text>
-                <Text style={styles.summaryAmount}>${totalEarnings.toFixed(2)}</Text>
+                <Text style={styles.summaryAmount}>
+                  ${Number(totalEarnings || 0).toFixed(2)}
+                </Text>
                 <Text style={styles.summaryDescription}>From all sales</Text>
               </View>
+
               <View style={styles.summaryCard}>
                 <Text style={styles.summaryLabel}>Completed</Text>
                 <Text style={styles.summaryAmount}>{completedTransactions.length}</Text>
                 <Text style={styles.summaryDescription}>Transactions</Text>
               </View>
+
               <View style={styles.summaryCard}>
                 <Text style={styles.summaryLabel}>Pending</Text>
                 <Text style={styles.summaryAmount}>{pendingTransactions.length}</Text>
@@ -95,13 +113,15 @@ export default function PaymentsScreen() {
             <StatCard
               icon="trending-up-outline"
               label="Average Transaction"
-              value={`$${(totalEarnings / (totalCount || 1)).toFixed(2)}`}
+              value={`$${(
+                Number(totalEarnings || 0) / (Number(totalCount) || 1)
+              ).toFixed(2)}`}
               color={COLORS.primary}
             />
             <StatCard
               icon="wallet-outline"
               label="Monthly Payout"
-              value={`$${(totalEarnings * 0.9).toFixed(2)}`}
+              value={`$${(Number(totalEarnings || 0) * 0.9).toFixed(2)}`}
               color={COLORS.success}
             />
           </View>
@@ -112,10 +132,12 @@ export default function PaymentsScreen() {
             <View style={styles.paymentMethodCard}>
               <View style={styles.methodHeader}>
                 <Ionicons name="card-outline" size={24} color={COLORS.primary} />
+
                 <View style={styles.methodInfo}>
                   <Text style={styles.methodName}>Stripe Account</Text>
                   <Text style={styles.methodEmail}>••••••••@stripe.com</Text>
                 </View>
+
                 <Ionicons name="checkmark-circle" size={24} color={COLORS.success} />
               </View>
               <TouchableOpacity style={styles.changeButton}>
@@ -129,13 +151,14 @@ export default function PaymentsScreen() {
             <FilterBar
               filters={FILTERS}
               activeFilter={filter}
-              onFilterChange={(value) => setFilter(value as any)}
+              onFilterChange={(value) => setFilter(value as 'all' | 'completed' | 'pending')}
             />
           </View>
 
           {/* Transactions List */}
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Recent Transactions</Text>
+
             {transactions.length === 0 ? (
               <View style={styles.emptyContainer}>
                 <Ionicons name="cash-outline" size={48} color={COLORS.subtle} />
@@ -144,24 +167,24 @@ export default function PaymentsScreen() {
             ) : (
               <FlatList
                 data={transactions}
-                keyExtractor={(item) => item.id}
+                keyExtractor={(item, index) => item?.id || index.toString()}
                 renderItem={({ item }) => (
                   <View
                     style={[
                       styles.transactionItem,
-                      item.status === 'pending' && styles.transactionPending,
+                      item?.status === 'pending' && styles.transactionPending,
                     ]}
                   >
                     <View style={styles.transactionIcon}>
                       <Ionicons
                         name={
-                          item.status === 'completed'
+                          item?.status === 'completed'
                             ? 'checkmark-circle'
                             : 'time-outline'
                         }
                         size={20}
                         color={
-                          item.status === 'completed'
+                          item?.status === 'completed'
                             ? COLORS.success
                             : COLORS.warning
                         }
@@ -170,25 +193,34 @@ export default function PaymentsScreen() {
 
                     <View style={styles.transactionContent}>
                       <Text style={styles.offerTitle} numberOfLines={1}>
-                        {item.offerTitle}
+                        {item?.offerTitle || 'Unknown Offer'}
                       </Text>
-                      <Text style={styles.buyerName}>From: {item.buyerName}</Text>
+
+                      <Text style={styles.buyerName}>
+                        From: {item?.buyerName || 'Unknown'}
+                      </Text>
+
                       <Text style={styles.transactionDate}>
-                        {formatRelativeTime(new Date(item.date))}
+                        {item?.date
+                          ? formatRelativeTime(new Date(item.date))
+                          : 'Unknown date'}
                       </Text>
                     </View>
 
                     <View style={styles.transactionAmount}>
-                      <Text style={styles.amount}>${item.amount.toFixed(2)}</Text>
+                      <Text style={styles.amount}>
+                        ${Number(item?.amount || 0).toFixed(2)}
+                      </Text>
+
                       <Text
                         style={[
                           styles.status,
-                          item.status === 'completed'
+                          item?.status === 'completed'
                             ? styles.completedStatus
                             : styles.pendingStatus,
                         ]}
                       >
-                        {item.status}
+                        {item?.status || 'unknown'}
                       </Text>
                     </View>
                   </View>

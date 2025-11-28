@@ -6,10 +6,10 @@ import {
   FlatList,
   StyleSheet,
   TouchableOpacity,
-  SafeAreaView,
   ScrollView,
   Dimensions,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { useApp } from '../../../context/AppContext';
@@ -35,6 +35,7 @@ interface SearchHistory {
 export default function SearchScreen({ navigation }: any) {
   const { offers } = useApp() as any;
   const [q, setQ] = useState('');
+  const normalize = (value?: string) => (value ?? '').toLowerCase();
   const [searchHistory, setSearchHistory] = useState<SearchHistory[]>([
     { id: '1', query: 'Fresh vegetables', timestamp: new Date() },
     { id: '2', query: 'Electronics', timestamp: new Date(Date.now() - 3600000) },
@@ -42,13 +43,13 @@ export default function SearchScreen({ navigation }: any) {
   ]);
 
   const results = useMemo(() => {
-    const t = q.trim().toLowerCase();
+    const t = normalize(q.trim());
     if (!t) return [];
-    return offers.filter(
-      (o: any) =>
-        o.title.toLowerCase().includes(t) ||
-        o.description?.toLowerCase().includes(t)
-    );
+    return offers.filter((o: any) => {
+      const title = normalize(o?.title);
+      const description = normalize(o?.description);
+      return title.includes(t) || description.includes(t);
+    });
   }, [offers, q]);
 
   const handleSearch = (query: string) => {
@@ -81,9 +82,11 @@ export default function SearchScreen({ navigation }: any) {
       </View>
       <View style={styles.resultContent}>
         <Text style={styles.resultTitle} numberOfLines={1}>
-          {item.title}
+          {item.title || 'Untitled offer'}
         </Text>
-        <Text style={styles.resultPrice}>${item.price.toFixed(2)}</Text>
+        <Text style={styles.resultPrice}>
+          ${typeof item.price === 'number' ? item.price.toFixed(2) : '0.00'}
+        </Text>
       </View>
       <Ionicons name="chevron-forward" size={20} color={COLORS.subtle} />
     </TouchableOpacity>
@@ -164,7 +167,9 @@ export default function SearchScreen({ navigation }: any) {
                   </TouchableOpacity>
                 </View>
                 <View style={styles.historyList}>
-                  {searchHistory.map((item) => renderHistoryItem({ item }))}
+                  {searchHistory.map((item) => (
+                    <View key={item.id}>{renderHistoryItem({ item })}</View>
+                  ))}
                 </View>
               </View>
             )}
@@ -180,9 +185,9 @@ export default function SearchScreen({ navigation }: any) {
                   { icon: 'book-outline', label: 'Books' },
                   { icon: 'home-outline', label: 'Home' },
                   { icon: 'shirt-outline', label: 'Fashion' },
-                ].map((cat, idx) => (
+                ].map((cat) => (
                   <TouchableOpacity
-                    key={idx}
+                    key={cat.label}
                     style={styles.categoryCard}
                     onPress={() => handleSearch(cat.label)}
                   >
@@ -207,9 +212,9 @@ export default function SearchScreen({ navigation }: any) {
                 '📱 Used Smartphones',
                 '✨ Handcrafted Jewelry',
                 '📚 Study Materials',
-              ].map((trend, idx) => (
+              ].map((trend) => (
                 <TouchableOpacity
-                  key={idx}
+                  key={trend}
                   style={styles.trendingItem}
                   onPress={() => handleSearch(trend.replace(/[^a-zA-Z ]/g, ''))}
                 >

@@ -1,4 +1,5 @@
-import React, { createContext, useContext, useMemo, useState } from 'react';
+import React, { createContext, useContext, useMemo, useState, useEffect } from 'react';
+import { OfferService, ConversationService } from '../services/api';
 
 type User = {
   id: string;
@@ -61,10 +62,11 @@ export type Conversation = {
   sellerName: string;
   offerId?: string;
   offerTitle?: string;
-  messages: Message[];
+  messages?: Message[];
   lastMessage?: string;
   lastAt?: string;
   unreadCount: number;
+  messageCount?: number;
 };
 
 type AppContextValue = {
@@ -103,61 +105,43 @@ type AppContextValue = {
 
 const AppContext = createContext<AppContextValue | undefined>(undefined);
 
-const initialOffers: Offer[] = [
-  {
-    id: '1',
-    title: 'Fresh Avocados (1kg)',
-    description: 'Locally sourced, ripe and ready to eat.',
-    price: 4.99,
-    imageUri: undefined,
-    distanceMeters: 850,
-    createdAt: new Date(Date.now() - 1000 * 60 * 30).toISOString(),
-    sellerId: 's-1',
-  },
-  {
-    id: '2',
-    title: 'Handmade Wallet',
-    description: 'Genuine leather, crafted by hand.',
-    price: 24.0,
-    imageUri: undefined,
-    distanceMeters: 2100,
-    createdAt: new Date(Date.now() - 1000 * 60 * 60 * 5).toISOString(),
-    sellerId: 's-2',
-  },
-  {
-    id: '3',
-    title: 'Cheddar Cheese (500g)',
-    description: 'Rich flavor, farm fresh.',
-    price: 8.5,
-    imageUri: undefined,
-    distanceMeters: 1200,
-    createdAt: new Date(Date.now() - 1000 * 60 * 60 * 26).toISOString(),
-    sellerId: 's-1',
-  },
-];
-
-const initialNotifications = [
-  { id: 'n-1', title: 'Welcome to LocalOffer', body: 'Thanks for trying the demo app!', createdAt: new Date().toISOString() },
-  { id: 'n-2', title: 'Offer liked', body: 'Someone liked your offer', createdAt: new Date(Date.now() - 1000 * 60 * 60).toISOString() },
-];
-
-const initialMessages = [
-  { id: 'm-1', withName: 'Alice', preview: 'Is this still available?', lastAt: new Date().toISOString() },
-  { id: 'm-2', withName: 'Bob', preview: 'Can you drop the price?', lastAt: new Date(Date.now() - 1000 * 60 * 60 * 6).toISOString() },
-];
-
-const initialFavorites = ['1'];
-
 export function AppProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
-  const [offers, setOffers] = useState<Offer[]>(initialOffers);
-  const [notifications] = useState(initialNotifications);
-  const [messages] = useState(initialMessages);
-  const [favorites, setFavorites] = useState<string[]>(initialFavorites);
+  const [offers, setOffers] = useState<Offer[]>([]);
+  const [notifications] = useState<Array<{ id: string; title: string; body?: string; createdAt?: string }>>([]);
+  const [messages] = useState<Array<{ id: string; withName?: string; preview?: string; lastAt?: string }>>([]);
+  const [favorites, setFavorites] = useState<string[]>([]);
   // ✨ NEW STATE
   const [cart, setCart] = useState<CartItem[]>([]);
   const [orders, setOrders] = useState<Order[]>([]);
   const [conversations, setConversations] = useState<Conversation[]>([]);
+
+  // Load offers from OfferService
+  useEffect(() => {
+    const loadOffers = async () => {
+      try {
+        const data = await OfferService.getAll();
+        setOffers(data as Offer[]);
+      } catch (error) {
+        console.error('Failed to load offers:', error);
+      }
+    };
+    loadOffers();
+  }, []);
+
+  // Load conversations from ConversationService
+  useEffect(() => {
+    if (!user) return;
+    const loadConversations = async () => {
+      try {
+        const data = await ConversationService.getByUserId(user.id);
+        setConversations(data as any[]);
+      } catch (error) {
+        console.error('Failed to load conversations:', error);
+      }
+    };
+    loadConversations();
+  }, [user]);
 
   const myOffers = useMemo(() => {
     if (!user) return [];
@@ -172,8 +156,14 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const login = async (email: string, password: string) => {
     // Demo auth: accept anything non-empty; choose role by email prefix
     if (!email || !password) return false;
-    const role: User['role'] = email.toLowerCase().startsWith('sell') ? 'seller' : 'buyer';
-    setUser({ id: role === 'seller' ? 's-1' : 'b-1', name: role === 'seller' ? 'Seller Demo' : 'Buyer Demo', role, email });
+    const normalizedEmail = email.toLowerCase();
+    const role: User['role'] = normalizedEmail.startsWith('sell') ? 'seller' : 'buyer';
+    setUser({
+      id: role === 'seller' ? 's-1' : 'b-1',
+      name: role === 'seller' ? 'Seller Demo' : 'Buyer Demo',
+      role,
+      email,
+    });
     return true;
   };
 
@@ -315,7 +305,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     setConversations((prev) =>
       prev.map((c) =>
         c.id === conversationId
-          ? { ...c, messages: [...c.messages, newMessage], lastMessage: text, lastAt: new Date().toISOString() }
+          ? { ...c, messages: [...(c.messages || []), newMessage], lastMessage: text, lastAt: new Date().toISOString() }
           : c
       )
     );

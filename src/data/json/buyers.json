@@ -1,0 +1,104 @@
+{
+  "buyers": [
+    {
+      "id": "buyer_1",
+      "name": "John Smith",
+      "email": "john.smith@example.com",
+      "phone": "+1 (555) 123-4567",
+      "location": "San Francisco, CA",
+      "avatar": "https://via.placeholder.com/100",
+      "bio": "Tech enthusiast and smart shopper",
+      "rating": 4.8,
+      "reviewCount": 45,
+      "totalOrders": 128,
+      "totalSpent": 3450.50,
+      "verified": true,
+      "joinDate": "2022-03-15",
+      "preferences": {
+        "notifications": true,
+        "emailUpdates": true,
+        "smsAlerts": false
+      }
+    },
+    {
+      "id": "buyer_2",
+      "name": "Sarah Johnson",
+      "email": "sarah.j@example.com",
+      "phone": "+1 (555) 234-5678",
+      "location": "New York, NY",
+      "avatar": "https://via.placeholder.com/100",
+      "bio": "Fashion and lifestyle lover",
+      "rating": 4.5,
+      "reviewCount": 32,
+      "totalOrders": 87,
+      "totalSpent": 2150.75,
+      "verified": true,
+      "joinDate": "2022-06-20",
+      "preferences": {
+        "notifications": true,
+        "emailUpdates": true,
+        "smsAlerts": true
+      }
+    },
+    {
+      "id": "buyer_3",
+      "name": "Mike Chen",
+      "email": "mike.chen@example.com",
+      "phone": "+1 (555) 345-6789",
+      "location": "Los Angeles, CA",
+      "avatar": "https://via.placeholder.com/100",
+      "bio": "Electronics and gadgets collector",
+      "rating": 4.9,
+      "reviewCount": 67,
+      "totalOrders": 156,
+      "totalSpent": 5280.99,
+      "verified": true,
+      "joinDate": "2021-11-05",
+      "preferences": {
+        "notifications": true,
+        "emailUpdates": false,
+        "smsAlerts": true
+      }
+    },
+    {
+      "id": "buyer_4",
+      "name": "Emma Davis",
+      "email": "emma.davis@example.com",
+      "phone": "+1 (555) 456-7890",
+      "location": "Chicago, IL",
+      "avatar": "https://via.placeholder.com/100",
+      "bio": "Home and garden enthusiast",
+      "rating": 4.6,
+      "reviewCount": 28,
+      "totalOrders": 64,
+      "totalSpent": 1890.25,
+      "verified": true,
+      "joinDate": "2023-01-10",
+      "preferences": {
+        "notifications": true,
+        "emailUpdates": true,
+        "smsAlerts": false
+      }
+    },
+    {
+      "id": "buyer_5",
+      "name": "Alex Rodriguez",
+      "email": "alex.r@example.com",
+      "phone": "+1 (555) 567-8901",
+      "location": "Austin, TX",
+      "avatar": "https://via.placeholder.com/100",
+      "bio": "Sports gear enthusiast",
+      "rating": 4.7,
+      "reviewCount": 41,
+      "totalOrders": 95,
+      "totalSpent": 2675.50,
+      "verified": false,
+      "joinDate": "2023-04-22",
+      "preferences": {
+        "notifications": false,
+        "emailUpdates": true,
+        "smsAlerts": false
+      }
+    }
+  ]
+}
