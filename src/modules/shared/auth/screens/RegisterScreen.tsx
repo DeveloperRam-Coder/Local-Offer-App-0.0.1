@@ -44,7 +44,7 @@ export default function RegisterScreen({ navigation }: any) {
         onPress: () => {
           // Navigate to the correct initial screen based on role
           if (role === 'seller') {
-            navigation.navigate('Main', { screen: 'SellerHome' });
+            navigation.navigate('Main', { screen: 'SellerDashboard' });
           } else {
             navigation.navigate('Main', { screen: 'BuyerHome' });
           }

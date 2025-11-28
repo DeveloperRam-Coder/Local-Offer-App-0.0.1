@@ -1,0 +1,52 @@
+{
+  "messages": [
+    {
+      "id": "msg_1",
+      "fromId": "buyer_1",
+      "fromName": "John Smith",
+      "toId": "seller_1",
+      "toName": "Tech Deals Hub",
+      "offerId": "offer_1",
+      "offerTitle": "iPhone 15 Pro Max",
+      "text": "Hi! Is this phone still available? Can you ship to SF?",
+      "createdAt": "2024-11-05T10:30:00Z",
+      "read": true
+    },
+    {
+      "id": "msg_2",
+      "fromId": "seller_1",
+      "fromName": "Tech Deals Hub",
+      "toId": "buyer_1",
+      "toName": "John Smith",
+      "offerId": "offer_1",
+      "offerTitle": "iPhone 15 Pro Max",
+      "text": "Yes, we have 45 units in stock! We ship within 24 hours. Free shipping to SF!",
+      "createdAt": "2024-11-05T10:45:00Z",
+      "read": true
+    },
+    {
+      "id": "msg_3",
+      "fromId": "buyer_2",
+      "fromName": "Sarah Johnson",
+      "toId": "seller_2",
+      "toName": "Fashion Forward",
+      "offerId": "offer_8",
+      "offerTitle": "Women's Summer Dress",
+      "text": "Do you have this in size M? What's the material composition?",
+      "createdAt": "2024-11-05T14:20:00Z",
+      "read": true
+    },
+    {
+      "id": "msg_4",
+      "fromId": "seller_2",
+      "fromName": "Fashion Forward",
+      "toId": "buyer_2",
+      "toName": "Sarah Johnson",
+      "offerId": "offer_8",
+      "offerTitle": "Women's Summer Dress",
+      "text": "Yes! Size M is available. Material is 95% cotton, 5% elastane for comfort and flexibility.",
+      "createdAt": "2024-11-05T14:35:00Z",
+      "read": true
+    }
+  ]
+}

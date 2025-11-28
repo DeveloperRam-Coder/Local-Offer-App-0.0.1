@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "Ram",
-    "slug": "frontend",
+    "slug": "local-offer-app",
     "version": "1.0.0",
     "scheme": "myapp",
     "android": {
@@ -22,10 +22,17 @@
             "DEFAULT"
           ]
         }
-      ]
+      ],
+      "package": "com.ram_gopal.localofferapp"
     },
     "plugins": [
       "expo-font"
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "25c79408-0530-42ee-901c-3df0c7624035"
+      }
+    },
+    "owner": "ram_gopal"
   }
 }

@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect } from 'react';
 import { useApp } from '../../../context/AppContext';
-import { generateMockAnalytics, generateMockProfile, generateMockConversations, generateMockTransactions } from '../utils';
+import { OrderService, ConversationService } from '../../../services/api';
 
 export const useSellerOffers = () => {
   const { myOffers } = useApp();
@@ -30,14 +30,31 @@ export const useSellerOffers = () => {
 };
 
 export const useSellerAnalytics = () => {
-  const [analytics, setAnalytics] = useState(generateMockAnalytics());
+  const [analytics, setAnalytics] = useState({
+    totalEarnings: 1250.5,
+    totalSales: 18,
+    conversionRate: 12.5,
+    responseTime: 45,
+    rating: 4.8,
+    reviewCount: 24,
+    weeklyViews: [120, 150, 180, 160, 190, 210, 175],
+    monthlySales: [5, 6, 7, 8, 8, 7, 6, 8, 6, 9, 12, 18],
+  });
   const [loading, setLoading] = useState(false);
 
   const refreshAnalytics = useCallback(async () => {
     setLoading(true);
-    // Simulate API call
     await new Promise((resolve) => setTimeout(resolve, 1000));
-    setAnalytics(generateMockAnalytics());
+    setAnalytics({
+      totalEarnings: 1250.5,
+      totalSales: 18,
+      conversionRate: 12.5,
+      responseTime: 45,
+      rating: 4.8,
+      reviewCount: 24,
+      weeklyViews: [120, 150, 180, 160, 190, 210, 175],
+      monthlySales: [5, 6, 7, 8, 8, 7, 6, 8, 6, 9, 12, 18],
+    });
     setLoading(false);
   }, []);
 
@@ -50,12 +67,24 @@ export const useSellerAnalytics = () => {
 
 export const useSellerProfile = () => {
   const { user } = useApp();
-  const [profile, setProfile] = useState(generateMockProfile());
+  const [profile, setProfile] = useState({
+    id: 's-1',
+    name: 'Local Seller',
+    email: 'seller@localoffers.com',
+    phone: '+1 (555) 234-5678',
+    bio: 'Quality seller with verified reviews. Fast shipping and excellent customer service.',
+    rating: 4.8,
+    reviewCount: 24,
+    totalSales: 18,
+    responseTime: 45,
+    verified: true,
+    joinDate: new Date(Date.now() - 1000 * 60 * 60 * 24 * 365).toISOString(),
+    location: 'San Francisco, CA',
+  });
   const [loading, setLoading] = useState(false);
 
   const updateProfile = useCallback(async (updates: any) => {
     setLoading(true);
-    // Simulate API call
     await new Promise((resolve) => setTimeout(resolve, 500));
     setProfile((prev) => ({ ...prev, ...updates }));
     setLoading(false);
@@ -70,9 +99,25 @@ export const useSellerProfile = () => {
 };
 
 export const useSellerMessages = () => {
-  const [conversations, setConversations] = useState(generateMockConversations());
+  const [conversations, setConversations] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
-  const unreadCount = conversations.reduce((sum, c) => sum + c.unreadCount, 0);
+
+  useEffect(() => {
+    const loadConversations = async () => {
+      setLoading(true);
+      try {
+        const data = await ConversationService.getAll();
+        setConversations(data as any[]);
+      } catch (error) {
+        console.error('Failed to load conversations:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadConversations();
+  }, []);
+
+  const unreadCount = conversations.reduce((sum, c) => sum + (c.unreadCount || 0), 0);
 
   const markAsRead = useCallback((conversationId: string) => {
     setConversations((prev) =>
@@ -91,18 +136,33 @@ export const useSellerMessages = () => {
 };
 
 export const useSellerTransactions = () => {
-  const [transactions, setTransactions] = useState(generateMockTransactions());
+  const [transactions, setTransactions] = useState<any[]>([]);
   const [filter, setFilter] = useState<'all' | 'completed' | 'pending'>('all');
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const loadTransactions = async () => {
+      setLoading(true);
+      try {
+        const data = await OrderService.getAll();
+        setTransactions(data as any[]);
+      } catch (error) {
+        console.error('Failed to load transactions:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadTransactions();
+  }, []);
 
   const filteredTransactions =
     filter === 'all'
       ? transactions
       : transactions.filter((t) => t.status === filter);
 
-  const totalEarnings = transactions
+  const totalEarnings = filteredTransactions
     .filter((t) => t.status === 'completed')
-    .reduce((sum, t) => sum + t.amount, 0);
+    .reduce((sum, t) => sum + (t.total || 0), 0);
 
   return {
     transactions: filteredTransactions,

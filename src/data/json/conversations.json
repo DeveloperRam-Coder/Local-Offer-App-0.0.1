@@ -1,0 +1,69 @@
+{
+  "conversations": [
+    {
+      "id": "conv_1",
+      "buyerId": "buyer_1",
+      "buyerName": "John Smith",
+      "sellerId": "seller_1",
+      "sellerName": "Tech Deals Hub",
+      "offerId": "offer_1",
+      "offerTitle": "iPhone 15 Pro Max",
+      "lastMessage": "Yes, we have 45 units in stock! We ship within 24 hours. Free shipping to SF!",
+      "lastAt": "2024-11-05T10:45:00Z",
+      "unreadCount": 0,
+      "messageCount": 2
+    },
+    {
+      "id": "conv_2",
+      "buyerId": "buyer_2",
+      "buyerName": "Sarah Johnson",
+      "sellerId": "seller_2",
+      "sellerName": "Fashion Forward",
+      "offerId": "offer_8",
+      "offerTitle": "Women's Summer Dress",
+      "lastMessage": "Yes! Size M is available. Material is 95% cotton, 5% elastane for comfort and flexibility.",
+      "lastAt": "2024-11-05T14:35:00Z",
+      "unreadCount": 0,
+      "messageCount": 2
+    },
+    {
+      "id": "conv_3",
+      "buyerId": "buyer_3",
+      "buyerName": "Mike Chen",
+      "sellerId": "seller_1",
+      "sellerName": "Tech Deals Hub",
+      "offerId": "offer_2",
+      "offerTitle": "Sony WH-1000XM5 Headphones",
+      "lastMessage": "Thank you for your purchase! Tracking number is...",
+      "lastAt": "2024-11-04T16:20:00Z",
+      "unreadCount": 0,
+      "messageCount": 5
+    },
+    {
+      "id": "conv_4",
+      "buyerId": "buyer_4",
+      "buyerName": "Emma Davis",
+      "sellerId": "seller_3",
+      "sellerName": "Home & Garden Pro",
+      "offerId": "offer_4",
+      "offerTitle": "Modern Sectional Sofa",
+      "lastMessage": "When will the sofa be delivered?",
+      "lastAt": "2024-11-05T09:15:00Z",
+      "unreadCount": 1,
+      "messageCount": 3
+    },
+    {
+      "id": "conv_5",
+      "buyerId": "buyer_5",
+      "buyerName": "Alex Rodriguez",
+      "sellerId": "seller_4",
+      "sellerName": "Sports Equipment Store",
+      "offerId": "offer_3",
+      "offerTitle": "Nike Air Max 90",
+      "lastMessage": "Perfect fit! Thanks for the quick shipping.",
+      "lastAt": "2024-11-02T12:40:00Z",
+      "unreadCount": 0,
+      "messageCount": 4
+    }
+  ]
+}

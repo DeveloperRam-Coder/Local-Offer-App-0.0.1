@@ -18,11 +18,12 @@ export default function DealsScreen({ navigation }: any) {
   const { offers } = useApp();
   const [query, setQuery] = useState('');
 
+  const normalize = (value?: string) => (value ?? '').toLowerCase();
   const filtered = useMemo(() => {
-    const q = query.trim().toLowerCase();
+    const q = normalize(query.trim());
     if (!q) return offers;
     return offers.filter(
-      (o) => o.title.toLowerCase().includes(q) || o.description.toLowerCase().includes(q)
+      (o) => normalize(o?.title).includes(q) || normalize(o?.description).includes(q)
     );
   }, [offers, query]);
 

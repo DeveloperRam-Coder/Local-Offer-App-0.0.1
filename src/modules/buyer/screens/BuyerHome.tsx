@@ -6,10 +6,11 @@ import { formatCurrency } from '../../common/utils';
 export default function BuyerHome({ navigation }: any) {
   const { offers } = useApp();
   const [query, setQuery] = useState('');
+  const normalize = (value?: string) => (value ?? '').toLowerCase();
   const filtered = useMemo(() => {
-    const q = query.trim().toLowerCase();
+    const q = normalize(query.trim());
     if (!q) return offers;
-    return offers.filter((o) => o.title.toLowerCase().includes(q));
+    return offers.filter((o) => normalize(o?.title).includes(q));
   }, [offers, query]);
 
   return (

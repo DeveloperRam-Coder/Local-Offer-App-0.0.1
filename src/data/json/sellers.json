@@ -1,0 +1,114 @@
+{
+  "sellers": [
+    {
+      "id": "seller_1",
+      "name": "Tech Deals Hub",
+      "email": "techdeals@example.com",
+      "phone": "+1 (555) 111-2222",
+      "location": "San Francisco, CA",
+      "avatar": "https://via.placeholder.com/100",
+      "bio": "Your trusted source for latest gadgets and electronics",
+      "rating": 4.9,
+      "reviewCount": 234,
+      "totalSales": 1250,
+      "responseTime": 2,
+      "verified": true,
+      "joined": "2021-05-10",
+      "totalRevenue": 125000.50,
+      "followers": 5432,
+      "policies": {
+        "returnDays": 30,
+        "freeShipping": true,
+        "warranty": "6 months"
+      }
+    },
+    {
+      "id": "seller_2",
+      "name": "Fashion Forward",
+      "email": "fashionfw@example.com",
+      "phone": "+1 (555) 222-3333",
+      "location": "New York, NY",
+      "avatar": "https://via.placeholder.com/100",
+      "bio": "Latest fashion trends at affordable prices",
+      "rating": 4.6,
+      "reviewCount": 156,
+      "totalSales": 892,
+      "responseTime": 4,
+      "verified": true,
+      "joined": "2021-08-15",
+      "totalRevenue": 89200.75,
+      "followers": 3421,
+      "policies": {
+        "returnDays": 14,
+        "freeShipping": false,
+        "warranty": null
+      }
+    },
+    {
+      "id": "seller_3",
+      "name": "Home & Garden Pro",
+      "email": "homegardenp@example.com",
+      "phone": "+1 (555) 333-4444",
+      "location": "Portland, OR",
+      "avatar": "https://via.placeholder.com/100",
+      "bio": "Everything for your home and garden needs",
+      "rating": 4.7,
+      "reviewCount": 189,
+      "totalSales": 756,
+      "responseTime": 3,
+      "verified": true,
+      "joined": "2022-01-20",
+      "totalRevenue": 75600.25,
+      "followers": 2891,
+      "policies": {
+        "returnDays": 30,
+        "freeShipping": true,
+        "warranty": "1 year"
+      }
+    },
+    {
+      "id": "seller_4",
+      "name": "Sports Equipment Store",
+      "email": "sportsequip@example.com",
+      "phone": "+1 (555) 444-5555",
+      "location": "Denver, CO",
+      "avatar": "https://via.placeholder.com/100",
+      "bio": "Premium sports gear for athletes",
+      "rating": 4.8,
+      "reviewCount": 267,
+      "totalSales": 1089,
+      "responseTime": 1,
+      "verified": true,
+      "joined": "2020-11-05",
+      "totalRevenue": 108900.99,
+      "followers": 4756,
+      "policies": {
+        "returnDays": 60,
+        "freeShipping": true,
+        "warranty": "Lifetime"
+      }
+    },
+    {
+      "id": "seller_5",
+      "name": "Books & Media",
+      "email": "booksmedia@example.com",
+      "phone": "+1 (555) 555-6666",
+      "location": "Boston, MA",
+      "avatar": "https://via.placeholder.com/100",
+      "bio": "Wide selection of books, movies, and media",
+      "rating": 4.5,
+      "reviewCount": 134,
+      "totalSales": 543,
+      "responseTime": 5,
+      "verified": false,
+      "joined": "2022-06-12",
+      "totalRevenue": 54300.00,
+      "followers": 1876,
+      "policies": {
+        "returnDays": 21,
+        "freeShipping": false,
+        "warranty": null
+      }
+    }
+  ]
+}

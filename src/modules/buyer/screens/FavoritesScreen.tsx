@@ -6,9 +6,9 @@ import {
   StyleSheet,
   TouchableOpacity,
   Dimensions,
-  SafeAreaView,
   ScrollView,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { useApp } from '../../../context/AppContext';
@@ -30,20 +30,26 @@ const cardWidth = (width - 52) / 2;
 export default function FavoritesScreen({ navigation }: any) {
   const { offers, favorites = [] } = useApp() as any;
   const [sortBy, setSortBy] = useState('recent');
+  const safeNumber = (value?: number) => (typeof value === 'number' ? value : 0);
+  const safeString = (value?: string) => value ?? '';
 
   const favOffers = useMemo(() => {
-    let result = offers.filter((o: any) => favorites.includes(o.id));
+    const favoriteOffers = offers.filter((o: any) => favorites.includes(o.id));
+    const result = [...favoriteOffers];
 
     switch (sortBy) {
       case 'price-low':
-        return result.sort((a: any, b: any) => a.price - b.price);
+        return result.sort((a: any, b: any) => safeNumber(a.price) - safeNumber(b.price));
       case 'price-high':
-        return result.sort((a: any, b: any) => b.price - a.price);
+        return result.sort((a: any, b: any) => safeNumber(b.price) - safeNumber(a.price));
       case 'name':
-        return result.sort((a: any, b: any) => a.title.localeCompare(b.title));
+        return result.sort((a: any, b: any) => safeString(a.title).localeCompare(safeString(b.title)));
       case 'recent':
       default:
-        return result;
+        return result.sort(
+          (a: any, b: any) =>
+            new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime()
+        );
     }
   }, [offers, favorites, sortBy]);
 
@@ -71,13 +77,15 @@ export default function FavoritesScreen({ navigation }: any) {
       </View>
       <View style={styles.cardContent}>
         <Text style={styles.cardTitle} numberOfLines={2}>
-          {item.title}
+          {item.title || 'Untitled offer'}
         </Text>
         <View style={styles.cardMeta}>
           <Ionicons name="location-outline" size={12} color={COLORS.subtle} />
           <Text style={styles.cardDistance}>2.5 km away</Text>
         </View>
-        <Text style={styles.cardPrice}>${item.price.toFixed(2)}</Text>
+        <Text style={styles.cardPrice}>
+          ${typeof item.price === 'number' ? item.price.toFixed(2) : '0.00'}
+        </Text>
       </View>
     </TouchableOpacity>
   );
@@ -165,7 +173,7 @@ export default function FavoritesScreen({ navigation }: any) {
               </Text>
               <TouchableOpacity
                 style={styles.exploreButton}
-                onPress={() => navigation.navigate('BuyerHome')}
+                onPress={() => navigation.navigate('Main', { screen: 'BuyerHome' })}
               >
                 <LinearGradient
                   colors={[COLORS.primary, COLORS.accent]}

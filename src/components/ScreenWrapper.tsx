@@ -1,5 +1,6 @@
 import React from 'react';
-import { SafeAreaView, View, StyleSheet, ViewProps } from 'react-native';
+import { View, StyleSheet, ViewProps } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 
 type Props = ViewProps & {

@@ -1,0 +1,56 @@
+{
+  "reviews": [
+    {
+      "id": "review_1",
+      "offerId": "offer_1",
+      "offerTitle": "iPhone 15 Pro Max",
+      "buyerId": "buyer_1",
+      "buyerName": "John Smith",
+      "rating": 5,
+      "title": "Excellent product! Highly recommend",
+      "comment": "Great phone with amazing camera quality. Delivery was fast and packaging was excellent.",
+      "verified": true,
+      "helpful": 24,
+      "createdAt": "2024-10-25"
+    },
+    {
+      "id": "review_2",
+      "offerId": "offer_2",
+      "offerTitle": "Sony WH-1000XM5 Headphones",
+      "buyerId": "buyer_3",
+      "buyerName": "Mike Chen",
+      "rating": 5,
+      "title": "Best headphones ever",
+      "comment": "Sound quality is incredible. Noise cancellation works perfectly. Battery life is amazing.",
+      "verified": true,
+      "helpful": 45,
+      "createdAt": "2024-11-05"
+    },
+    {
+      "id": "review_3",
+      "offerId": "offer_3",
+      "offerTitle": "Nike Air Max 90",
+      "buyerId": "buyer_5",
+      "buyerName": "Alex Rodriguez",
+      "rating": 4,
+      "title": "Comfortable but pricey",
+      "comment": "Great shoes, very comfortable. Quality is good but price is a bit high.",
+      "verified": true,
+      "helpful": 12,
+      "createdAt": "2024-11-04"
+    },
+    {
+      "id": "review_4",
+      "offerId": "offer_8",
+      "offerTitle": "Women's Summer Dress",
+      "buyerId": "buyer_2",
+      "buyerName": "Sarah Johnson",
+      "rating": 4,
+      "title": "Nice dress, good fit",
+      "comment": "Arrived quickly. Material is good quality. Fits perfectly as described.",
+      "verified": true,
+      "helpful": 8,
+      "createdAt": "2024-11-04"
+    }
+  ]
+}

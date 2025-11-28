@@ -90,7 +90,7 @@ export default function SellerHome({ navigation }: any) {
   };
 
   return (
-    <SafeAreaView style={styles.container} edges={['top']}>
+    <SafeAreaView style={styles.container}>
       <LinearGradient
         colors={['#0F172A', '#1E293B', '#1E3A8A']}
         style={styles.gradient}

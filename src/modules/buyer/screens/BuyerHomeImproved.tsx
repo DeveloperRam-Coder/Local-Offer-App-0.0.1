@@ -3,7 +3,6 @@ import {
   View,
   Text,
   StyleSheet,
-  SafeAreaView,
   ScrollView,
   TouchableOpacity,
   RefreshControl,
@@ -12,6 +11,7 @@ import {
   Dimensions,
   Image,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useApp } from '../../../context/AppContext';
@@ -63,32 +63,37 @@ export default function BuyerHome({ navigation }: BuyerHomeProps) {
   ];
 
   // Filter and sort offers
+  const normalize = (value?: string) => (value ?? '').toLowerCase();
+  const safeNumber = (value?: number) => (typeof value === 'number' ? value : 0);
+
   const filteredOffers = useMemo(() => {
-    let result = offers;
+    let result = [...offers];
 
     // Filter by search query
     if (searchQuery.trim()) {
-      const query = searchQuery.toLowerCase();
-      result = result.filter(
-        (o) =>
-          o.title.toLowerCase().includes(query) ||
-          o.description?.toLowerCase().includes(query)
-      );
+      const query = normalize(searchQuery);
+      result = result.filter((o) => {
+        const title = normalize(o?.title);
+        const description = normalize(o?.description);
+        return title.includes(query) || description.includes(query);
+      });
     }
 
     // Sort offers
     switch (sortBy) {
       case 'price-low':
-        result.sort((a, b) => a.price - b.price);
+        result.sort((a, b) => safeNumber(a.price) - safeNumber(b.price));
         break;
       case 'price-high':
-        result.sort((a, b) => b.price - a.price);
+        result.sort((a, b) => safeNumber(b.price) - safeNumber(a.price));
         break;
       case 'distance':
         result.sort((a, b) => (a.distanceMeters || 0) - (b.distanceMeters || 0));
         break;
       case 'rating':
-        result.sort((a, b) => (b.price || 0) - (a.price || 0));
+        result.sort(
+          (a, b) => safeNumber(b.price) - safeNumber(a.price)
+        );
         break;
       case 'recent':
       default:

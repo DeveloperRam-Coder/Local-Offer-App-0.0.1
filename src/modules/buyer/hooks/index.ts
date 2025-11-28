@@ -1,14 +1,9 @@
-import { useState, useCallback } from 'react';
-import {
-  generateMockCart,
-  generateMockOrders,
-  generateMockNotifications,
-  generateMockPreferences,
-} from '../utils/index';
+import { useState, useCallback, useEffect } from 'react';
+import { OrderService } from '../../../services/api';
 
 // Hook for managing shopping cart
 export const useBuyerCart = () => {
-  const [cart, setCart] = useState(generateMockCart());
+  const [cart, setCart] = useState({ items: [], subtotal: 0, tax: 0, total: 0, lastUpdated: new Date().toISOString() });
 
   const addToCart = useCallback((item: any) => {
     setCart((prevCart) => {
@@ -121,7 +116,23 @@ export const useBuyerSearch = () => {
 
 // Hook for order management
 export const useBuyerHistory = () => {
-  const [orders, setOrders] = useState(generateMockOrders());
+  const [orders, setOrders] = useState<any[]>([]);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const loadOrders = async () => {
+      setLoading(true);
+      try {
+        const data = await OrderService.getAll();
+        setOrders(data as any[]);
+      } catch (error) {
+        console.error('Failed to load orders:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadOrders();
+  }, []);
 
   const getOrderById = useCallback((orderId: string) => {
     return orders.find((o) => o.id === orderId);
@@ -144,12 +155,42 @@ export const useBuyerHistory = () => {
     }
   }, [getOrderById]);
 
-  return { orders, getOrderById, getOrdersByStatus, reorderItem };
+  return { orders, loading, getOrderById, getOrdersByStatus, reorderItem };
 };
 
 // Hook for buyer notifications
 export const useBuyerNotifications = () => {
-  const [notifications, setNotifications] = useState(generateMockNotifications());
+  const [notifications, setNotifications] = useState<any[]>([]);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    setNotifications([
+      {
+        id: 'n-1',
+        type: 'new-offer',
+        title: 'New offer matching your interests!',
+        body: 'Fresh organic vegetables just listed nearby',
+        timestamp: new Date().toISOString(),
+        read: false,
+      },
+      {
+        id: 'n-2',
+        type: 'price-drop',
+        title: 'Price dropped on a saved item',
+        body: 'Handmade Wallet reduced from $30 to $24',
+        timestamp: new Date(Date.now() - 1000 * 60 * 30).toISOString(),
+        read: false,
+      },
+      {
+        id: 'n-3',
+        type: 'order-update',
+        title: 'Your order has shipped!',
+        body: 'Order #o-1 is on its way',
+        timestamp: new Date(Date.now() - 1000 * 60 * 60).toISOString(),
+        read: true,
+      },
+    ]);
+  }, []);
 
   const markAsRead = useCallback((notificationId: string) => {
     setNotifications((prev) =>
@@ -169,6 +210,7 @@ export const useBuyerNotifications = () => {
 
   return {
     notifications,
+    loading,
     unreadCount,
     markAsRead,
     markAllAsRead,
@@ -178,7 +220,13 @@ export const useBuyerNotifications = () => {
 
 // Hook for buyer profile
 export const useBuyerProfile = () => {
-  const [preferences, setPreferences] = useState(generateMockPreferences());
+  const [preferences, setPreferences] = useState({
+    favoriteCategories: ['Fresh Produce', 'Handmade', 'Electronics'],
+    priceRange: { min: 0, max: 100 },
+    distanceRadius: 5000,
+    searchHistory: ['avocados', 'wallet', 'cheese', 'organic'],
+    recentlyViewed: ['1', '2', '3'],
+  });
 
   const updatePreferences = useCallback((newPrefs: any) => {
     setPreferences((prev) => ({ ...prev, ...newPrefs }));

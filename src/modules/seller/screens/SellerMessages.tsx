@@ -27,6 +27,7 @@ export default function SellerMessages({ navigation }: any) {
   const { user } = useApp();
   const { conversations, unreadCount, markAsRead } = useSellerMessages();
   const [searchQuery, setSearchQuery] = useState('');
+  const normalize = (value?: string) => (value ?? '').toLowerCase();
 
   if (!user || user.role !== 'seller') {
     return (
@@ -43,7 +44,7 @@ export default function SellerMessages({ navigation }: any) {
   }
 
   const filteredConversations = conversations.filter((conv) =>
-    conv.participantName.toLowerCase().includes(searchQuery.toLowerCase())
+    normalize(conv?.participantName).includes(normalize(searchQuery))
   );
 
   const handleConversationPress = (conversation: any) => {
@@ -107,7 +108,7 @@ export default function SellerMessages({ navigation }: any) {
                 <View style={styles.conversationContent}>
                   <View style={styles.conversationHeader}>
                     <Text style={styles.participantName} numberOfLines={1}>
-                      {item.participantName}
+                      {item.participantName || 'Buyer'}
                     </Text>
                     <Text style={styles.timestamp}>
                       {formatRelativeTime(new Date(item.lastMessageTime))}
