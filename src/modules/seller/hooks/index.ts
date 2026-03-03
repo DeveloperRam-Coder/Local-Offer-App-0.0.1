@@ -8,7 +8,7 @@ export const useSellerOffers = () => {
   const [sortBy, setSortBy] = useState<'recent' | 'popular' | 'price'>('recent');
 
   useEffect(() => {
-    let sorted = [...myOffers];
+    const sorted = [...myOffers];
     
     if (sortBy === 'popular') {
       sorted.sort((a, b) => (b.distanceMeters || 0) - (a.distanceMeters || 0));

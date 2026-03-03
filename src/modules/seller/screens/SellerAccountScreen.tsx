@@ -29,7 +29,7 @@ export default function SellerProfile({ navigation }: any) {
   const { user, logout } = useApp();
   const { profile, loading, updateProfile } = useSellerProfile();
   const [isEditing, setIsEditing] = useState(false);
-  const [editedProfile, setEditedProfile] = useState(profile || {});
+  const [editedProfile, setEditedProfile] = useState(profile);
 
   if (!user || user.role !== 'seller') {
     return (
@@ -113,7 +113,7 @@ export default function SellerProfile({ navigation }: any) {
                   style={[styles.actionButton, styles.cancelButton]}
                   onPress={() => {
                     setIsEditing(false);
-                    setEditedProfile(profile || {});
+                    setEditedProfile(profile);
                   }}
                 >
                   <Ionicons name="close-outline" size={18} color={COLORS.danger} />
