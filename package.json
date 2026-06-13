@@ -36,6 +36,7 @@
     "@babel/core": "^7.20.0",
     "@eslint/js": "^9.39.1",
     "@types/react": "~19.1.10",
+    "baseline-browser-mapping": "^2.10.37",
     "eslint": "^9.39.1",
     "eslint-config-react-native": "^4.1.0",
     "eslint-plugin-react": "^7.37.5",

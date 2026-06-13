@@ -1,4 +1,4 @@
-// Export all services from a single location
+// Legacy service exports (read-only, JSON-backed)
 export {
   BuyerService,
   SellerService,
@@ -10,3 +10,25 @@ export {
 } from './dataService';
 
 export { default as apiService } from './dataService';
+
+// New in-memory store with full CRUD
+export {
+  OfferStore,
+  OrderStore,
+  ReviewStore,
+  ConversationStore,
+  MessageStore,
+  NotificationStore,
+  resetStore,
+} from './store';
+
+export type {
+  Offer,
+  Order,
+  Review,
+  Conversation,
+  Message,
+  AppNotification,
+  OfferStatus,
+  OrderStatus,
+} from './store';

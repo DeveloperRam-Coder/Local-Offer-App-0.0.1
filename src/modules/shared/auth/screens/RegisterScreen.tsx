@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -7,272 +7,223 @@ import {
   TouchableOpacity,
   KeyboardAvoidingView,
   Platform,
+  ScrollView,
+  ActivityIndicator,
   Alert,
 } from 'react-native';
-import { ScreenWrapper } from '../../../common/components/layout';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { useApp } from '../../../../context/AppContext';
 
-// 🎨 Same color palette as onboarding/login
-const COLORS = {
-  background: '#0F172A',
+const C = {
+  bg: '#060D1F',
   card: '#1E293B',
+  border: 'rgba(255,255,255,0.08)',
   primary: '#38BDF8',
   accent: '#F97316',
-  secondary: '#34D399',
-  text: '#F8FAFC',
+  success: '#34D399',
+  text: '#F1F5F9',
+  muted: '#94A3B8',
+  error: '#F87171',
 };
 
 export default function RegisterScreen({ navigation }: any) {
-  const { register } = useApp();
-  const [name, setName] = useState('Demo User');
-  const [email, setEmail] = useState('buyer@example.com');
-  const [password, setPassword] = useState('password');
+  const { register, isAuthenticated, user } = useApp();
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [showPass, setShowPass] = useState(false);
   const [role, setRole] = useState<'buyer' | 'seller'>('buyer');
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (isAuthenticated && user) {
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'Main', params: { screen: user.role === 'seller' ? 'SellerDashboard' : 'BuyerHome' } }],
+      });
+    }
+  }, [isAuthenticated, user]);
 
   const onSubmit = async () => {
-    const ok = await register(name.trim(), email.trim(), password, role);
-    if (!ok) {
-      Alert.alert('Error', 'Please provide name, email, and password');
+    if (loading) return;
+    if (!name.trim() || !email.trim() || !password) {
+      Alert.alert('Missing fields', 'Please fill in all fields.');
       return;
     }
-
-    Alert.alert('Welcome', `Registered as ${role}`, [
-      { 
-        text: 'Continue', 
-        onPress: () => {
-          // Navigate to the correct initial screen based on role
-          if (role === 'seller') {
-            navigation.navigate('Main', { screen: 'SellerDashboard' });
-          } else {
-            navigation.navigate('Main', { screen: 'BuyerHome' });
-          }
-        }
-      },
-    ]);
+    setLoading(true);
+    const ok = await register(name.trim(), email.trim(), password, role);
+    setLoading(false);
+    if (!ok) Alert.alert('Error', 'Registration failed. Please try again.');
   };
 
   return (
-    <ScreenWrapper>
-      <KeyboardAvoidingView
-        behavior={Platform.select({ ios: 'padding', android: undefined })}
-        style={styles.container}
-      >
-        <View style={styles.inner}>
-          <Text style={styles.title}>Create an Account</Text>
-          <Text style={styles.subtitle}>Join and start your journey</Text>
+    <LinearGradient colors={['#060D1F', '#0F172A', '#1B2A4A']} style={styles.root}>
+      <SafeAreaView style={styles.safe}>
+        <KeyboardAvoidingView
+          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+          style={styles.kav}
+        >
+          <ScrollView
+            contentContainerStyle={styles.scroll}
+            keyboardShouldPersistTaps="handled"
+            showsVerticalScrollIndicator={false}
+          >
+            {/* Brand */}
+            <View style={styles.brand}>
+              <View style={styles.logoCircle}>
+                <Ionicons name="pricetag-outline" size={32} color={C.primary} />
+              </View>
+              <Text style={styles.brandName}>LocalOffer</Text>
+            </View>
+
+            <Text style={styles.heading}>Create account</Text>
+            <Text style={styles.subheading}>Join thousands of local buyers & sellers</Text>
+
+            {/* Role picker */}
+            <View style={styles.roleRow}>
+              {(['buyer', 'seller'] as const).map((r) => (
+                <TouchableOpacity
+                  key={r}
+                  style={[styles.roleBtn, role === r && { borderColor: r === 'buyer' ? C.primary : C.success, backgroundColor: (r === 'buyer' ? C.primary : C.success) + '18' }]}
+                  onPress={() => setRole(r)}
+                >
+                  <Ionicons
+                    name={r === 'buyer' ? 'cart-outline' : 'storefront-outline'}
+                    size={18}
+                    color={role === r ? (r === 'buyer' ? C.primary : C.success) : C.muted}
+                  />
+                  <Text style={[styles.roleText, role === r && { color: r === 'buyer' ? C.primary : C.success, fontWeight: '700' }]}>
+                    {r === 'buyer' ? "I'm a Buyer" : "I'm a Seller"}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </View>
 
             {/* Name */}
-            <View style={styles.inputContainer}>
-              <Ionicons name="person-outline" size={20} color="#9CA3AF" style={styles.icon} />
+            <View style={styles.field}>
+              <Ionicons name="person-outline" size={18} color={C.muted} />
               <TextInput
-                placeholder="Full name"
-                placeholderTextColor="#9CA3AF"
                 style={styles.input}
+                placeholder="Full name"
+                placeholderTextColor={C.muted}
                 value={name}
                 onChangeText={setName}
+                returnKeyType="next"
               />
             </View>
 
             {/* Email */}
-            <View style={styles.inputContainer}>
-              <Ionicons name="mail-outline" size={20} color="#9CA3AF" style={styles.icon} />
+            <View style={styles.field}>
+              <Ionicons name="mail-outline" size={18} color={C.muted} />
               <TextInput
-                placeholder="Email"
-                placeholderTextColor="#9CA3AF"
+                style={styles.input}
+                placeholder="Email address"
+                placeholderTextColor={C.muted}
                 autoCapitalize="none"
                 keyboardType="email-address"
-                style={styles.input}
                 value={email}
                 onChangeText={setEmail}
+                returnKeyType="next"
               />
             </View>
 
             {/* Password */}
-            <View style={styles.inputContainer}>
-              <Ionicons name="lock-closed-outline" size={20} color="#9CA3AF" style={styles.icon} />
+            <View style={styles.field}>
+              <Ionicons name="lock-closed-outline" size={18} color={C.muted} />
               <TextInput
-                placeholder="Password"
-                placeholderTextColor="#9CA3AF"
-                secureTextEntry
                 style={styles.input}
+                placeholder="Password"
+                placeholderTextColor={C.muted}
+                secureTextEntry={!showPass}
                 value={password}
                 onChangeText={setPassword}
+                returnKeyType="done"
+                onSubmitEditing={onSubmit}
               />
-            </View>
-
-            {/* Role Selection */}
-            <View style={styles.roleRow}>
-              <TouchableOpacity
-                onPress={() => setRole('buyer')}
-                style={[
-                  styles.roleBtn,
-                  role === 'buyer' && { backgroundColor: COLORS.primary },
-                ]}
-              >
-                <Ionicons
-                  name="cart-outline"
-                  size={18}
-                  color={role === 'buyer' ? '#fff' : '#9CA3AF'}
-                  style={{ marginRight: 6 }}
-                />
-                <Text
-                  style={[
-                    styles.roleText,
-                    role === 'buyer' && { color: '#fff' },
-                  ]}
-                >
-                  I'm a Buyer
-                </Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                onPress={() => setRole('seller')}
-                style={[
-                  styles.roleBtn,
-                  role === 'seller' && { backgroundColor: COLORS.secondary },
-                ]}
-              >
-                <Ionicons
-                  name="storefront-outline"
-                  size={18}
-                  color={role === 'seller' ? '#fff' : '#9CA3AF'}
-                  style={{ marginRight: 6 }}
-                />
-                <Text
-                  style={[
-                    styles.roleText,
-                    role === 'seller' && { color: '#fff' },
-                  ]}
-                >
-                  I'm a Seller
-                </Text>
+              <TouchableOpacity onPress={() => setShowPass(!showPass)} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
+                <Ionicons name={showPass ? 'eye-off-outline' : 'eye-outline'} size={18} color={C.muted} />
               </TouchableOpacity>
             </View>
 
-            {/* Register Button */}
-            <TouchableOpacity onPress={onSubmit} style={styles.button}>
+            {/* Submit */}
+            <TouchableOpacity
+              onPress={onSubmit}
+              disabled={loading}
+              activeOpacity={0.85}
+              style={styles.btnWrap}
+            >
               <LinearGradient
-                colors={[COLORS.primary, COLORS.accent]}
+                colors={role === 'seller' ? [C.success, '#059669'] : [C.primary, '#0EA5E9']}
                 start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 1 }}
-                style={styles.buttonGradient}
+                end={{ x: 1, y: 0 }}
+                style={[styles.btn, loading && { opacity: 0.6 }]}
               >
-                <Text style={styles.buttonText}>Register</Text>
-                <Ionicons name="arrow-forward" size={20} color="#fff" />
+                {loading
+                  ? <ActivityIndicator color="#fff" />
+                  : <>
+                      <Text style={styles.btnText}>Create Account</Text>
+                      <Ionicons name="arrow-forward" size={18} color="#fff" />
+                    </>
+                }
               </LinearGradient>
             </TouchableOpacity>
 
-            {/* Link to Login */}
-            <TouchableOpacity
-              onPress={() => navigation.replace('Login')}
-              style={styles.linkBtn}
-            >
-              <Text style={styles.link}>
-                Have an account? <Text style={styles.linkHighlight}>Login</Text>
+            {/* Login link */}
+            <TouchableOpacity onPress={() => navigation.replace('Login')} style={styles.link}>
+              <Text style={styles.linkText}>
+                Already have an account?{'  '}
+                <Text style={{ color: C.primary, fontWeight: '700' }}>Sign In</Text>
               </Text>
             </TouchableOpacity>
-          </View>
+          </ScrollView>
         </KeyboardAvoidingView>
-    </ScreenWrapper>
+      </SafeAreaView>
+    </LinearGradient>
   );
 }
 
 const styles = StyleSheet.create({
-  gradient: {
-    flex: 1,
-    justifyContent: 'center',
+  root: { flex: 1 },
+  safe: { flex: 1 },
+  kav: { flex: 1 },
+  scroll: { flexGrow: 1, justifyContent: 'center', paddingHorizontal: 24, paddingVertical: 32 },
+
+  brand: { alignItems: 'center', marginBottom: 28 },
+  logoCircle: {
+    width: 64, height: 64, borderRadius: 20,
+    backgroundColor: 'rgba(56,189,248,0.12)',
+    borderWidth: 1, borderColor: 'rgba(56,189,248,0.25)',
+    justifyContent: 'center', alignItems: 'center', marginBottom: 10,
   },
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-  },
-  inner: {
-    padding: 24,
-    justifyContent: 'center',
-  },
-  title: {
-    fontSize: 26,
-    fontWeight: '700',
-    color: COLORS.text,
-    textAlign: 'center',
-    marginBottom: 4,
-  },
-  subtitle: {
-    fontSize: 16,
-    color: '#CBD5E1',
-    textAlign: 'center',
-    marginBottom: 28,
-  },
-  inputContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: COLORS.card,
-    borderRadius: 14,
-    marginVertical: 10,
-    paddingHorizontal: 14,
-    borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.1)',
-  },
-  icon: {
-    marginRight: 8,
-  },
-  input: {
-    flex: 1,
-    color: COLORS.text,
-    paddingVertical: 12,
-    fontSize: 16,
-  },
-  roleRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginTop: 10,
-  },
+  brandName: { fontSize: 22, fontWeight: '800', color: C.text, letterSpacing: 0.5 },
+
+  heading: { fontSize: 26, fontWeight: '800', color: C.text, marginBottom: 6 },
+  subheading: { fontSize: 15, color: C.muted, marginBottom: 24 },
+
+  roleRow: { flexDirection: 'row', gap: 10, marginBottom: 20 },
   roleBtn: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    flex: 1,
-    paddingVertical: 12,
-    marginHorizontal: 6,
-    borderRadius: 12,
-    backgroundColor: COLORS.card,
+    flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8,
+    paddingVertical: 12, borderRadius: 12,
+    backgroundColor: C.card, borderWidth: 1.5, borderColor: C.border,
   },
-  roleText: {
-    color: '#CBD5E1',
-    fontSize: 15,
+  roleText: { color: C.muted, fontSize: 14 },
+
+  field: {
+    flexDirection: 'row', alignItems: 'center', gap: 10,
+    backgroundColor: C.card, borderRadius: 14, paddingHorizontal: 14, marginBottom: 14,
+    borderWidth: 1, borderColor: C.border,
   },
-  button: {
-    alignSelf: 'center',
-    width: '100%',
-    marginTop: 24,
+  input: { flex: 1, color: C.text, fontSize: 15, paddingVertical: 14 },
+
+  btnWrap: { borderRadius: 14, overflow: 'hidden', marginTop: 4 },
+  btn: {
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
+    paddingVertical: 15, gap: 8,
   },
-  buttonGradient: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: 25,
-    paddingVertical: 14,
-    paddingHorizontal: 24,
-  },
-  buttonText: {
-    color: '#fff',
-    fontSize: 18,
-    fontWeight: '600',
-    marginRight: 8,
-  },
-  linkBtn: {
-    padding: 16,
-    alignItems: 'center',
-    marginTop: 8,
-  },
-  link: {
-    color: '#CBD5E1',
-    fontSize: 15,
-  },
-  linkHighlight: {
-    color: COLORS.primary,
-    fontWeight: '600',
-  },
+  btnText: { color: '#fff', fontSize: 16, fontWeight: '700' },
+
+  link: { alignItems: 'center', marginTop: 20, paddingVertical: 4 },
+  linkText: { color: C.muted, fontSize: 14 },
 });

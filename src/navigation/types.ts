@@ -27,22 +27,21 @@ export type RootStackParamList = {
 };
 
 export type MainTabParamList = {
-  // Buyer Tabs
+  // Buyer Tabs (4 pillars)
   BuyerHome: undefined;
   Deals: undefined;
-  Search: undefined;
   Messages: undefined;
   Account: undefined;
-  
-  // Seller Tabs
+
+  // Seller Tabs (4 pillars)
   SellerDashboard: undefined;
   ManageOffers: undefined;
   SellerMessages: undefined;
-  PaymentsScreen: undefined;
   SellerAccountScreen: undefined;
-  
-  // Shared Tabs (legacy)
+
+  // Legacy (kept for type compatibility)
+  Search: undefined;
+  PaymentsScreen: undefined;
   SellerHome: undefined;
-  NewOffer: undefined;
   MyOffers: undefined;
 };
